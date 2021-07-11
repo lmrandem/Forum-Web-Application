@@ -12,7 +12,7 @@ class UserService extends AbstractService {
         return $stmt->get_result()->fetch_assoc();
     }
 
-    private function getUser(string $sql, string $param) {
+    private function getUser(string $sql, string $param): ?array {
         $stmt = $this->getConnection()->prepare($sql);
         $stmt->bind_param('s', $param);
         $stmt->execute();
