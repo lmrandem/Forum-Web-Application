@@ -10,6 +10,7 @@ require_once 'utils/RequestHandler.php';
 require_once 'route/auth.php';
 require_once 'route/user.php';
 require_once 'route/post.php';
+require_once 'route/comment.php';
 require_once 'route/board.php';
 require_once 'route/subscription.php';
 
