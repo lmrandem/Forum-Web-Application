@@ -19,7 +19,7 @@ class PostElement extends AbstractComponent {
         const postHeaderText = document.createElement('h2');
 
         const title = new Link(this.app, {
-            text: `${this.props.id} - ${this.props.title}`,
+            text: this.props.title,
             href: `/posts/${this.props.id}/${this.props.slug}`,
             className: 'post__title'
         });
