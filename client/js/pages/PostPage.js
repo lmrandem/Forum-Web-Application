@@ -1,14 +1,19 @@
 import Button from '../components/Button';
+import Comment from '../components/Comment';
 import Text from '../components/Text';
 import Title from '../components/Title';
 import AbstractPage from '../utils/AbstractPage';
+import CommentService from '../utils/CommentService';
 import PostService from '../utils/postService';
 import NoMatch from './NoMatch';
 
 class PostPage extends AbstractPage {
 
+    #comment;
+
     constructor(app, params) {
         super(app, params);
+        this.#comment = '';
     }
 
     async #getPost() {
@@ -19,6 +24,22 @@ class PostPage extends AbstractPage {
             return post.data;
         }
         return null;
+    }
+
+    async #listComments() {
+        const { id } = this.params;
+        const comments = await CommentService.listComments({ post: id });
+        if (comments?.success) {
+            return comments.data;
+        }
+        return [];
+    }
+
+    async #submitReply(data) {
+        const reply = await CommentService.createComment(data);
+        if (reply?.success) {
+            this.render();
+        }
     }
 
     async html() {
@@ -35,6 +56,8 @@ class PostPage extends AbstractPage {
         if (location.pathname !== fullPath) {
             await this.app.router.navigateTo(fullPath, false);
         }
+
+        const comments = await this.#listComments();
 
         return await this.wrapper(async (components) => {
             const title = new Title(this.app, {
@@ -61,6 +84,52 @@ class PostPage extends AbstractPage {
                 text: post.content
             });
             components.push(await content.render());
+
+            const commentForm = document.createElement('form');
+            commentForm.onsubmit = async (e) => {
+                e.preventDefault();
+                await this.#submitReply({
+                    comment: this.#comment,
+                    post: post.id,
+                    user: this.app.auth.data.user.id
+                });
+            }
+
+            const label = document.createElement('label');
+            label.textContent = 'Your comment:';
+            label.htmlFor = 'comment';
+
+            const textarea = document.createElement('textarea');
+            textarea.id = 'comment';
+            textarea.oninput = (e) => {
+                this.#comment = e.target.value;
+            }
+
+            const postBtn = new Button(this.app, {
+                text: 'Post',
+                type: 'submit'
+            });
+
+            commentForm.append(
+                label,
+                textarea,
+                await postBtn.render()
+            );
+
+            components.push(commentForm);
+
+            const commentSection = document.createElement('section');
+
+            const postComments = await Promise.all(comments.map(async (comment) => {
+                const c = new Comment(this.app, {
+                    ...comment,
+                    onSubmit: async (data) => await this.#submitReply(data)
+                });
+                return await c.render();
+            }));
+            commentSection.append(...postComments);
+
+            components.push(commentSection);
         });
     }
 

@@ -14,7 +14,7 @@ class CommentController {
     }
 
     public function list(Request $request, Response $response): Response {
-        $comments = $this->commentService->listComments();
+        $comments = $this->commentService->listComments($request->query);
         return $response->status(200)->json(['success'=>true, 'data'=>$comments]);
     }
 

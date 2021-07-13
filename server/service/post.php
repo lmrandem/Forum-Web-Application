@@ -10,23 +10,23 @@ class PostService extends AbstractService {
         $sql[] = 'SELECT posts.id, title, slug, createdAt, updatedAt, board, username';
         $sql[] = 'FROM posts, users';
         $sql[] = 'WHERE posts.user = users.id';
-        $queries = [];
+        $values = [];
         $types = '';
-        if (isset($query) && isset($query['username'])) {
+        if ($query && isset($query['username'])) {
             $sql[] = 'AND users.username = ?';
             $queries[] = $query['username'];
             $types = $types.'s';
         }
-        if (isset($query) && isset($query['board'])) {
+        if ($query && isset($query['board'])) {
             $sql[] = 'AND board = ?';
-            $queries[] = $query['board'];
+            $values[] = $query['board'];
             $types = $types.'s';
         }
         $sql[] = 'ORDER BY posts.id ASC';
         $sql = implode(' ', $sql);
         $stmt = $this->getConnection()->prepare($sql);
-        if ($query) {
-            $stmt->bind_param($types, ...$queries);
+        if ($values) {
+            $stmt->bind_param($types, ...$values);
         }
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
