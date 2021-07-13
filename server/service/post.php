@@ -42,11 +42,11 @@ class PostService extends AbstractService {
         return $stmt->get_result()->fetch_assoc();
     }
 
-    public function createPost(string $title, string $content, int $userId, int $board): bool {
-        $sql = 'INSERT INTO posts (title, content, user, board, slug) VALUES (?, ?, ?, ?, ?)';
+    public function createPost(string $title, string $content, string $board, int $user): bool {
+        $sql = 'INSERT INTO posts (title, content, slug, board, user) VALUES (?, ?, ?, ?, ?)';
         $stmt = $this->getConnection()->prepare($sql);
         $slug = Slug::slugify($title);
-        $stmt->bind_param('sssis', $title, $content, $slug, $userId, $board);
+        $stmt->bind_param('ssssi', $title, $content, $slug, $board, $user);
         return $stmt->execute();
     }
 

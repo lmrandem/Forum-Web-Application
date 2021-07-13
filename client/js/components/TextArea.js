@@ -2,8 +2,8 @@ import AbstractComponent from "../utils/AbstractComponent";
 
 class TextArea extends AbstractComponent {
 
-    constructor(app, { label, id, value }) {
-        super(app, { label, id, value });
+    constructor(app, { label, id, value, onInput }) {
+        super(app, { label, id, value, onInput });
     }
 
     async html() {
@@ -15,11 +15,11 @@ class TextArea extends AbstractComponent {
             const textarea = document.createElement('textarea');
             textarea.id = this.props.id;
             textarea.value = this.props.value;
-            textarea.oninput = (e) => {
-                this.#handleOnInput(e);
-            }
+            textarea.oninput = (e) => this.props.onInput(e);
             components.push(textarea);
         });
     }
 
 }
+
+export default TextArea;

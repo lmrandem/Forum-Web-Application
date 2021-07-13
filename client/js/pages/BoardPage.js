@@ -1,7 +1,9 @@
+import Button from "../components/Button";
 import PostsContainer from "../components/PostsContainer";
 import AbstractPage from "../utils/AbstractPage";
 import BoardService from "../utils/BoardService";
 import PostService from "../utils/postService";
+import SubscriptionService from "../utils/SubscriptionService";
 
 class BoardPage extends AbstractPage {
 
@@ -27,9 +29,33 @@ class BoardPage extends AbstractPage {
         return [];
     }
 
+    async subscribe() {
+        const subscribe = await SubscriptionService.subscribe(this.params.name);
+        if (subscribe?.success) {
+            this.render();
+        }
+    }
+
+    async unsubscribe() {
+        const unsubscribe = await SubscriptionService.unsubscribe(this.params.name);
+        if (unsubscribe?.success) {
+            this.render();
+        }
+    }
+
+    async isSubscribed() {
+        const subscription = await SubscriptionService.getSubscription(this.params.name);
+        if (subscription?.success) {
+            return true;
+        }
+        return false;
+    }
+
     async html() {
+        const { isLoggedIn } = this.app.auth.data;
         const { name, title, description } = await this.#fetchBoard();
-        // const posts = this.#getBoardPosts();
+
+        const isSubscribed = await this.isSubscribed();
 
         this.setTitle(`${name}: ${title}`);
 
@@ -41,6 +67,28 @@ class BoardPage extends AbstractPage {
             const boardDesc = document.createElement('p');
             boardDesc.textContent = description;
             components.push(boardDesc);
+
+            const subscribeBtn = new Button(this.app, {
+                text: isSubscribed ? 'Unsubscribe' : 'Subscribe',
+                type: 'button',
+                onClick: isSubscribed ? (
+                    () => this.unsubscribe()
+                ) : (
+                    () => this.subscribe()
+                )
+            });
+            components.push(await subscribeBtn.render());
+
+            if (isLoggedIn) {
+                const createBtn = new Button(this.app, {
+                    text: 'Create',
+                    onClick: async () => {
+                        await this.app.router.navigateTo(`/posts/new`);
+                    },
+                    type: 'button'
+                });
+                components.push(await createBtn.render());
+            }
 
             const boardPosts = new PostsContainer(this.app, {
                 fetchPosts: () => this.#fetchPosts()

@@ -19,7 +19,7 @@ class SubscriptionController {
         if (!isset($request->params['board'])) {
             return $response->status(400)->json(['success'=>false, 'message'=>'Missing identifier']);
         }
-        $subscription = $this->subscriptionService->getPost($request->params['board']);
+        $subscription = $this->subscriptionService->getSubscription($request->params['board'], $request->user['id']);
         if (!$subscription) {
             return $response->status(404)->json(['success'=>false, 'message'=>'Subscription not found']);
         }

@@ -61,7 +61,7 @@ class PostPage extends AbstractPage {
 
         return await this.wrapper(async (components) => {
             const title = new Title(this.app, {
-                text: `${post.id} - ${post.title}`
+                text: post.title
             });
             components.push(await title.render());
             const date = new Text(this.app, {

@@ -31,10 +31,12 @@ class PostController {
     }
 
     public function create(Request $request, Response $response): Response {
-        if (!isset($request->body['title']) || !isset($request->body['content'])) {
+        if (!isset($request->body['title']) || !$request->body['title'] || 
+            !isset($request->body['content']) || !$request->body['content'] || 
+            !isset($request->body['board']) || !$request->body['board']) {
             return $response->status(400)->json(['success'=>false, 'message'=>'Missing input']);
         }
-        $created = $this->postService->createPost($request->body['title'], $request->body['content'], $request->user['id']);
+        $created = $this->postService->createPost($request->body['title'], $request->body['content'], $request->body['board'], $request->user['id']);
         if (!$created) {
             return $response->status(500)->json(['success'=>false, 'message'=>'Post not created']);
         }
