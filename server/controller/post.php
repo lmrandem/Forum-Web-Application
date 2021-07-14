@@ -19,6 +19,11 @@ class PostController {
         return $response->status(200)->json(['success'=>true, 'data'=>$posts]);
     }
 
+    public function listSubscribed(Request $request, Response $response): Response {
+        $posts = $this->postService->listSubscribedPosts($request->user['id']);
+        return $response->status(200)->json(['success'=>true, 'data'=>$posts]);
+    }
+
     public function get(Request $request, Response $response): Response {
         if (!isset($request->params['id'])) {
             return $response->status(400)->json(['success'=>false, 'message'=>'Missing identifier']);

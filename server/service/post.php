@@ -14,7 +14,7 @@ class PostService extends AbstractService {
         $types = '';
         if ($query && isset($query['username'])) {
             $sql[] = 'AND users.username = ?';
-            $queries[] = $query['username'];
+            $values[] = $query['username'];
             $types = $types.'s';
         }
         if ($query && isset($query['board'])) {
@@ -22,7 +22,7 @@ class PostService extends AbstractService {
             $values[] = $query['board'];
             $types = $types.'s';
         }
-        $sql[] = 'ORDER BY posts.id ASC';
+        $sql[] = 'ORDER BY posts.createdAt ASC';
         $sql = implode(' ', $sql);
         $stmt = $this->getConnection()->prepare($sql);
         if ($values) {
@@ -32,10 +32,22 @@ class PostService extends AbstractService {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function listSubscribedPosts($user): ?array {
+        $sql = 'SELECT posts.id, title, slug, createdAt, updatedAt, posts.board, username
+            FROM posts JOIN (SELECT * FROM subscriptions AS s WHERE s.user = ?) AS subs
+            ON posts.board = subs.board, users
+            WHERE posts.user = users.id
+            ORDER BY createdAt DESC';
+        $stmt = $this->getConnection()->prepare($sql);
+        $stmt->bind_param('i', $user);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getPost(int $id): ?array {
         $sql = 'SELECT posts.id, title, slug, content, updatedAt, board, username
-                FROM posts, users
-                WHERE posts.user = users.id AND posts.id = ?';
+            FROM posts, users
+            WHERE posts.user = users.id AND posts.id = ?';
         $stmt = $this->getConnection()->prepare($sql);
         $stmt->bind_param('i', $id);
         $stmt->execute();
