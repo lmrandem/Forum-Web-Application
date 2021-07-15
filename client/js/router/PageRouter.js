@@ -10,6 +10,7 @@ import EditPostPage from "../pages/EditPostPage";
 import UserPage from "../pages/UserPage";
 import BoardsPage from "../pages/BoardsPage";
 import BoardPage from "../pages/BoardPage";
+import CreateBoardPage from "../pages/CreateBoardPage";
 
 class PageRouter extends AbstractComponent {
 
@@ -28,7 +29,8 @@ class PageRouter extends AbstractComponent {
         router.route('/posts/:id/:slug').to(PostPage);
         // Boards
         router.route('/boards').to(BoardsPage);
-        router.route('/boards/:name').to(BoardPage);
+        router.route('/boards/new').to(CreateBoardPage);
+        router.route('/b/:name').to(BoardPage);
         // User
         router.route('/users/:username').to(UserPage);
         // Fallback page

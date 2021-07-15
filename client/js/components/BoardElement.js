@@ -15,7 +15,7 @@ class BoardElement extends AbstractComponent {
 
         const title = new Link(this.app, {
             text: `${this.props.name}: ${this.props.title}`,
-            href: `/boards/${this.props.name}`
+            href: `/b/${this.props.name}`
         });
         boardHeaderText.append(await title.render());
 

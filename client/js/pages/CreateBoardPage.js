@@ -1,39 +1,28 @@
-import BoardSelect from "../components/BoardSelect";
-import Button from "../components/Button";
+import AbstractPage from "../utils/AbstractPage";
 import Input from "../components/Input";
 import TextArea from "../components/TextArea";
 import Title from "../components/Title";
-import AbstractPage from "../utils/AbstractPage";
+import Button from "../components/Button";
 import BoardService from "../utils/BoardService";
-import PostService from "../utils/postService";
 
-class CreatePostPage extends AbstractPage {
+class CreateBoardPage extends AbstractPage {
 
     #formData;
 
     constructor(app, params) {
         super(app, params);
-        this.setTitle('Create post');
         this.#formData = {
-            board: '',
+            name: '',
             title: '',
-            content: ''
+            description: ''
         }
     }
 
-    async #listBoards() {
-        const boards = await BoardService.listBoards();
-        if (boards?.success) {
-            return boards.data;
-        }
-        return [];
-    }
-
-    async #submitPost(e) {
+    async #submitBoard(e) {
         e.preventDefault();
-        const created = await PostService.createPost(this.#formData);
+        const created = await BoardService.createBoard(this.#formData);
         if (created?.success) {
-            await this.app.router.navigateTo('/');
+            await this.app.router.navigateTo(`/b/${this.#formData.name}`);
         }
     }
 
@@ -46,23 +35,21 @@ class CreatePostPage extends AbstractPage {
     }
 
     async html() {
-        const boards = await this.#listBoards();
-
         return await this.wrapper(async (components) => {
             const title = new Title(this.app, {
-                text: 'Create post'
+                text: 'Create board'
             });
             components.push(await title.render());
 
             const form = document.createElement('form');
-            form.onsubmit = async (e) => await this.#submitPost(e);
+            form.onsubmit = async (e) => await this.#submitBoard(e);
 
-            const boardSelect = new BoardSelect(this.app, {
-                label: 'Board',
-                id: 'board',
-                placeholder: 'Choose a board',
-                boards,
-                onChange: (e) => this.#handleChange(e)
+            const nameInput = new Input(this.app, {
+                label: 'Name',
+                id: 'name',
+                value: this.#formData.name,
+                onInput: (e) => this.#handleChange(e),
+                type: 'text'
             });
 
             const titleInput = new Input(this.app, {
@@ -73,22 +60,22 @@ class CreatePostPage extends AbstractPage {
                 type: 'text'
             });
 
-            const contentInput = new TextArea(this.app, {
-                label: 'Content',
-                id: 'content',
-                value: this.#formData.content,
+            const descriptionInput = new TextArea(this.app, {
+                label: 'Description',
+                id: 'description',
+                value: this.#formData.description,
                 onInput: (e) => this.#handleChange(e)   
             });
 
             const btn = new Button(this.app, {
-                text: 'Post',
+                text: 'Create',
                 type: 'submit'
             })
 
             form.append(
-                await boardSelect.render(),
+                await nameInput.render(),
                 await titleInput.render(),
-                await contentInput.render(),
+                await descriptionInput.render(),
                 await btn.render()
             );
             
@@ -98,4 +85,4 @@ class CreatePostPage extends AbstractPage {
 
 }
 
-export default CreatePostPage;
+export default CreateBoardPage;

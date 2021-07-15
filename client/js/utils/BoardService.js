@@ -34,24 +34,6 @@ class BoardService extends AbstractService {
         }
     }
 
-    static async subscribeToBoard(data) {
-        try {
-            return await this.http.post('/boards/subscribe', data);
-        }
-        catch (err) {
-            return err;
-        }
-    }
-
-    static async unsubscribeFromBoard(data) {
-        try {
-            return await this.http.post('/boards/unsubscribe', data);
-        }
-        catch (err) {
-            return err;
-        }
-    }
-
 }
 
 export default BoardService;

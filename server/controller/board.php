@@ -34,11 +34,15 @@ class BoardController {
             || !isset($request->body['description'])) {
             return $response->status(400)->json(['success'=>false, 'message'=>'Missing input']);
         }
-        $board = $this->boardService->getBoard($request->body['title']);
+        $name = $request->body['name'];
+        $title = $request->body['title'];
+        $desc = $request->body['description'];
+
+        $board = $this->boardService->getBoard($name);
         if ($board) {
             return $response->status(400)->json(['success'=>false, 'message'=>'Board already exists']);
         }
-        $board = $this->boardService->createBoard($request->body['title']);
+        $board = $this->boardService->createBoard($name, $title, $desc, $request->user['id']);
         if (!$board) {
             return $response->status(500)->json(['success'=>false, 'message'=>'Board not created']);
         }
