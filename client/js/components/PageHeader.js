@@ -1,6 +1,7 @@
 import AbstractComponent from "../utils/AbstractComponent";
 import UserService from "../utils/userService";
 import Button from "./Button";
+import Link from "./Link";
 import Navbar from "./Navbar";
 import Text from "./Text";
 
@@ -25,8 +26,10 @@ class PageHeader extends AbstractComponent {
         const navbar = new Navbar(this.app);
         header.append(await navbar.render());
         if (isLoggedIn) {
-            const userName = new Text(this.app, {
-                text: user.name
+            const userName = new Link(this.app, {
+                text: user.name,
+                href: `/users/${user.username}`,
+                activeClassName: 'link--active'
             })
             const button = new Button(this.app, {
                 text: 'Logout',
