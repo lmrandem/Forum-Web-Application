@@ -6,9 +6,12 @@ import PostService from '../utils/postService';
 
 class PostsPage extends AbstractPage {
 
+    #showAll;
+
     constructor(app, params) {
         super(app, params);
         this.setTitle('Posts');
+        this.#showAll = false;
     }
 
     async #listPosts() {
@@ -16,15 +19,22 @@ class PostsPage extends AbstractPage {
         if (posts?.success) {
             return posts.data;
         }
-        else {
-            console.log('error');
+        return [];
+    }
+
+    async #listSubscribedPosts() {
+        const posts = await PostService.listSubscribedPosts();
+        if (posts?.success) {
+            return posts.data;
         }
         return [];
     }
 
     async html() {
         const { isLoggedIn } = this.app.auth.data;
-        // const posts = await this.#listPosts();
+        if (!isLoggedIn) {
+            this.#showAll = true;
+        }
 
         return await this.wrapper(async (components) => {
             const title = new Title(this.app, {
@@ -33,18 +43,23 @@ class PostsPage extends AbstractPage {
             components.push(await title.render());
             
             if (isLoggedIn) {
-                const createBtn = new Button(this.app, {
-                    text: 'Create',
+                const toggleBtn = new Button(this.app, {
+                    text: this.#showAll ? 'Your feed' : 'All posts',
                     onClick: async () => {
-                        await this.app.router.navigateTo(`/posts/new`);
+                        this.#showAll = !this.#showAll;
+                        this.render();
                     },
                     type: 'button'
                 });
-                components.push(await createBtn.render());
+                components.push(await toggleBtn.render());
             }
 
             const postsList = new PostsContainer(this.app, {
-                fetchPosts: () => this.#listPosts()
+                fetchPosts: this.#showAll ? (
+                    () => this.#listPosts()
+                ) : (
+                    () => this.#listSubscribedPosts()
+                )
             });
             components.push(await postsList.render());
         });

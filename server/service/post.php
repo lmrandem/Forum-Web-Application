@@ -22,7 +22,7 @@ class PostService extends AbstractService {
             $values[] = $query['board'];
             $types = $types.'s';
         }
-        $sql[] = 'ORDER BY posts.createdAt ASC';
+        $sql[] = 'ORDER BY posts.createdAt DESC';
         $sql = implode(' ', $sql);
         $stmt = $this->getConnection()->prepare($sql);
         if ($values) {
@@ -37,7 +37,7 @@ class PostService extends AbstractService {
             FROM posts JOIN (SELECT * FROM subscriptions AS s WHERE s.user = ?) AS subs
             ON posts.board = subs.board, users
             WHERE posts.user = users.id
-            ORDER BY createdAt DESC';
+            ORDER BY posts.createdAt DESC';
         $stmt = $this->getConnection()->prepare($sql);
         $stmt->bind_param('i', $user);
         $stmt->execute();

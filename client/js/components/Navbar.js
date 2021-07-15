@@ -9,14 +9,9 @@ class Navbar extends AbstractComponent {
 
     async html() {
         const navbar = document.createElement('nav');
-        const home = new Link(this.app, {
-            text: 'Home',
-            href: '/',
-            activeClassName: 'link--active'
-        });
         const posts = new Link(this.app, {
-            text: 'All posts',
-            href: '/posts',
+            text: 'Posts',
+            href: '/',
             activeClassName: 'link--active'
         });
         const boards = new Link(this.app, {
@@ -25,7 +20,6 @@ class Navbar extends AbstractComponent {
             activeClassName: 'link--active'
         });
         navbar.append(
-            await home.render(),
             await posts.render(),
             await boards.render()
         );

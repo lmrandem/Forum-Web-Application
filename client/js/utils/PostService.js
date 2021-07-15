@@ -25,6 +25,15 @@ class PostService extends AbstractService {
         }
     }
 
+    static async listSubscribedPosts() {
+        try {
+            return await this.http.get('/posts/subscribed');
+        }
+        catch (err) {
+            return err;
+        }
+    }
+
     static async createPost(data) {
         try {
             return await this.http.post('/posts', data);

@@ -1,5 +1,4 @@
 import Forbidden from "../pages/Forbidden";
-import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import NoMatch from "../pages/NoMatch";
 import PostPage from "../pages/PostPage";
@@ -18,12 +17,11 @@ class PageRouter extends AbstractComponent {
         super(app, null);
         const router = app.router;
         // Home
-        router.route('/').to(HomePage);
+        router.route('/').to(PostsPage);
         // Auth
         router.authRoute('/login').to(Forbidden).fallback(LoginPage);
         router.authRoute('/register').to(Forbidden).fallback(RegisterPage);
         // Posts
-        router.route('/posts').to(PostsPage);
         router.authRoute('/posts/new').to(CreatePostPage).fallback(Forbidden);
         router.authRoute('/posts/:id/:slug/edit').to(EditPostPage).fallback(Forbidden);
         router.route('/posts/:id').to(PostPage);
