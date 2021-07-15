@@ -23,14 +23,18 @@ class PageRouter extends AbstractComponent {
         router.authRoute('/login').to(Forbidden).fallback(LoginPage);
         router.authRoute('/register').to(Forbidden).fallback(RegisterPage);
         // Posts
-        router.authRoute('/posts/new').to(CreatePostPage).fallback(Forbidden);
-        router.authRoute('/posts/:id/:slug/edit').to(EditPostPage).fallback(Forbidden);
-        router.route('/posts/:id').to(PostPage);
-        router.route('/posts/:id/:slug').to(PostPage);
+        // router.authRoute('/posts/new').to(CreatePostPage).fallback(Forbidden);
+        // router.authRoute('/posts/:id/:slug/edit').to(EditPostPage).fallback(Forbidden);
+        // router.route('/posts/:id').to(PostPage);
+        // router.route('/posts/:id/:slug').to(PostPage);
         // Boards
         router.route('/boards').to(BoardsPage);
-        router.route('/boards/new').to(CreateBoardPage);
+        router.authRoute('/boards/new').to(CreateBoardPage).fallback(Forbidden);
         router.route('/b/:name').to(BoardPage);
+        router.authRoute('/b/:name/new').to(CreatePostPage).fallback(Forbidden);
+        router.route('/b/:name/:id/').to(PostPage);
+        router.route('/b/:name/:id/:slug').to(PostPage);
+        router.authRoute('/b/:name/:id/:slug/edit').to(EditPostPage).fallback(Forbidden);
         // User
         router.route('/users/:username').to(UserPage);
         // Fallback page

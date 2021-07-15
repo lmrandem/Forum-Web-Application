@@ -83,7 +83,7 @@ class BoardPage extends AbstractPage {
                 const createBtn = new Button(this.app, {
                     text: 'Create',
                     onClick: async () => {
-                        await this.app.router.navigateTo(`/posts/new`);
+                        await this.app.router.navigateTo(`/b/${this.params.name}/new`);
                     },
                     type: 'button'
                 });

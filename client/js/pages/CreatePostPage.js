@@ -15,25 +15,17 @@ class CreatePostPage extends AbstractPage {
         super(app, params);
         this.setTitle('Create post');
         this.#formData = {
-            board: '',
+            board: params.name,
             title: '',
             content: ''
         }
-    }
-
-    async #listBoards() {
-        const boards = await BoardService.listBoards();
-        if (boards?.success) {
-            return boards.data;
-        }
-        return [];
     }
 
     async #submitPost(e) {
         e.preventDefault();
         const created = await PostService.createPost(this.#formData);
         if (created?.success) {
-            await this.app.router.navigateTo('/');
+            await this.app.router.navigateTo(`/b/${this.params.name}`);
         }
     }
 
@@ -46,8 +38,6 @@ class CreatePostPage extends AbstractPage {
     }
 
     async html() {
-        const boards = await this.#listBoards();
-
         return await this.wrapper(async (components) => {
             const title = new Title(this.app, {
                 text: 'Create post'
@@ -56,14 +46,6 @@ class CreatePostPage extends AbstractPage {
 
             const form = document.createElement('form');
             form.onsubmit = async (e) => await this.#submitPost(e);
-
-            const boardSelect = new BoardSelect(this.app, {
-                label: 'Board',
-                id: 'board',
-                placeholder: 'Choose a board',
-                boards,
-                onChange: (e) => this.#handleChange(e)
-            });
 
             const titleInput = new Input(this.app, {
                 label: 'Title',
@@ -86,7 +68,6 @@ class CreatePostPage extends AbstractPage {
             })
 
             form.append(
-                await boardSelect.render(),
                 await titleInput.render(),
                 await contentInput.render(),
                 await btn.render()

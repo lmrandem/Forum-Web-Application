@@ -5,8 +5,8 @@ import Text from "./Text";
 
 class PostElement extends AbstractComponent {
 
-    constructor(app, { id, title, slug, date, username, onClick }) {
-        super(app, { id, title, slug, date, username, onClick });
+    constructor(app, { id, title, slug, date, username, board, onClick }) {
+        super(app, { id, title, slug, date, username, board, onClick });
     }
 
     async html() {
@@ -20,7 +20,7 @@ class PostElement extends AbstractComponent {
 
         const title = new Link(this.app, {
             text: this.props.title,
-            href: `/posts/${this.props.id}/${this.props.slug}`,
+            href: `/b/${this.props.board}/${this.props.id}/${this.props.slug}`,
             className: 'post__title'
         });
         postHeaderText.append(await title.render());

@@ -41,7 +41,7 @@ class EditPostPage extends AbstractPage {
         e.preventDefault();
         const updated = await PostService.updatePost(this.params.id, this.#formData);
         if (updated?.success) {
-            this.app.router.navigateTo(`/posts/${this.params.id}`);
+            this.app.router.navigateTo(`/b/${this.params.name}/${this.params.id}/${this.params.slug}`);
         }
     }
 

@@ -26,6 +26,7 @@ class PostsContainer extends AbstractComponent {
                 slug: post.slug,
                 date: post.updatedAt,
                 username: post.username,
+                board: post.board,
                 onClick: async () => {
                     await this.#deletePost(post.id);
                 }

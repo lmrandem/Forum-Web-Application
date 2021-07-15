@@ -51,7 +51,7 @@ class PostPage extends AbstractPage {
             return await noMatch.render();
         }
 
-        const fullPath = `/posts/${post.id}/${post.slug}`;
+        const fullPath = `/b/${post.board}/${post.id}/${post.slug}`;
 
         if (location.pathname !== fullPath) {
             await this.app.router.navigateTo(fullPath, false);
@@ -73,7 +73,7 @@ class PostPage extends AbstractPage {
                 const editBtn = new Button(this.app, {
                     text: 'Edit',
                     onClick: async () => {
-                        await this.app.router.navigateTo(`/posts/${post.id}/${post.slug}/edit`);
+                        await this.app.router.navigateTo(`/b/${post.board}/${post.id}/${post.slug}/edit`);
                     },
                     type: 'button'
                 });
